@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  app:
+    build: './project'
+    container_name: 'app'
+    command: gunicorn config.wsgi:application -c config/gunicorn.conf.py --bind 0.0.0.0:8000
+    expose:
+      - 8000
+    volumes:
+      - static_volume:/app/static
+      - media_volume:/app/media
+
+  nginx:
+    build: ./nginx
+    ports:
+      - 1337:80
+    volumes:
+      - static_volume:/app/static
+      - media_volume:/app/media
+    depends_on:
+      - app
+
+volumes:
+  pg-data:
+  static_volume:
+  media_volume:
