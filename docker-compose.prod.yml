@@ -1,19 +1,19 @@
 version: '3'
 
 services:
-  web:
+  django:
     build: 
       context: './project'
       dockerfile: Dockerfile.prod
-    container_name: 'drf-template_web'
+    container_name: 'drf-template_django'
     command: gunicorn config.wsgi:application -c config/gunicorn.conf.py --bind 0.0.0.0:8000
     env_file:
       - ./.env.prod
     expose:
       - 8000
     volumes:
-      - static_volume:/app/web/static
-      - media_volume:/app/web/media
+      - static_volume:/app/django/static
+      - media_volume:/app/django/media
     depends_on:
       - db
 
@@ -29,10 +29,10 @@ services:
     ports:
       - 1337:80
     volumes:
-      - static_volume:/app/web/static
-      - media_volume:/app/web/media
+      - static_volume:/app/django/static
+      - media_volume:/app/django/media
     depends_on:
-      - web
+      - django
 
 volumes:
   pg-data:
