@@ -57,6 +57,10 @@ RUN chmod +x  $APP_HOME/entrypoint.prod.sh
 # copy project
 COPY . $APP_HOME
 
+# setup django
+RUN python manage.py migrate --no-input
+RUN python manage.py collectstatic --no-input
+
 # chown all the files to the app user
 RUN chown -R app:app $APP_HOME
 

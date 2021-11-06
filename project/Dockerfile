@@ -25,8 +25,9 @@ RUN chmod +x $APP_HOME/entrypoint.sh
 # copy project
 COPY . .
 
-RUN mkdir static/
-RUN mkdir media/
+# setup django
+RUN python manage.py migrate --no-input
+RUN python manage.py collectstatic --no-input
 
 # run entrypoint.sh
 ENTRYPOINT ["/django/entrypoint.sh"]
