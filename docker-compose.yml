@@ -3,7 +3,6 @@ version: '3'
 services:
   django:
     build: './project'
-    container_name: 'drf-template_django'
     command: python manage.py runserver 0.0.0.0:8000
     ports:
       - 8000:8000
