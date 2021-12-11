@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'apps.accounts',
+    'apps.utils',
 ]
 
 MIDDLEWARE = [
@@ -104,5 +105,5 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=3),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=30)
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
 }
