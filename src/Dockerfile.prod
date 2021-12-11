@@ -3,7 +3,7 @@
 ###########
 
 # pull official base image
-FROM python:3.9.6-slim as builder
+FROM python:3.9.7-slim as builder
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -27,16 +27,20 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requir
 #########
 
 # pull official base image
-FROM python:3.9.6-slim
+FROM python:3.9.7-slim
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# create the appropriate directories
-ENV HOME=/app
-ENV APP_HOME=/app/django
-RUN mkdir -p $APP_HOME
+ENV APP_HOME=/django
+ENV ENTRYPOINT="entrypoint.prod.sh"
+ENV ENTRYPOINT_DIR="${APP_HOME}/${ENTRYPOINT}"
+
+# create venv & use as default
+ENV VENV_DIR=/venv
+RUN python -m venv $VENV_DIR
+ENV PATH="$VENV_DIR/bin:$PATH"
 
 WORKDIR $APP_HOME
 
@@ -44,15 +48,24 @@ WORKDIR $APP_HOME
 RUN apt update && apt install libpq-dev gcc -y -q
 COPY --from=builder /usr/src/app/wheels /wheels
 COPY --from=builder /usr/src/app/requirements.txt .
-RUN pip install --no-cache /wheels/*
+RUN pip install --upgrade pip wheel && pip install --no-cache /wheels/*
 
 # copy entrypoint.prod.sh
-COPY ./entrypoint.prod.sh .
-RUN sed -i 's/\r$//g'  $APP_HOME/entrypoint.prod.sh
-RUN chmod +x  $APP_HOME/entrypoint.prod.sh
+ADD ./${ENTRYPOINT} .
+RUN sed -i 's/\r$//g' $ENTRYPOINT_DIR
+RUN chmod +x $ENTRYPOINT_DIR
 
 # copy project
 COPY . $APP_HOME
 
+RUN python manage.py collectstatic --no-input
+
+# create the app user & permit to use app files
+RUN addgroup app && useradd -g app app
+RUN chown -R app:app $APP_HOME
+
+# change to the app user
+USER app
+
 # run entrypoint.prod.sh
-ENTRYPOINT ["/app/django/entrypoint.prod.sh"]
+ENTRYPOINT ["/django/entrypoint.prod.sh"]

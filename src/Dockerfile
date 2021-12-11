@@ -1,6 +1,4 @@
-FROM python:3.9.6-slim
-
-WORKDIR /django
+FROM python:3.9.7-slim
 
 # install psycopg2 dependencies
 RUN apt-get update \
@@ -11,18 +9,27 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 ENV APP_HOME=/django
+ENV ENTRYPOINT="entrypoint.sh"
+ENV ENTRYPOINT_DIR="${APP_HOME}/${ENTRYPOINT}"
+
+# create venv & use as default
+ENV VENV_DIR=/venv
+RUN python -m venv $VENV_DIR
+ENV PATH="$VENV_DIR/bin:$PATH"
+
+WORKDIR $APP_HOME
 
 # install dependencies
 ADD requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN pip install --upgrade pip wheel && pip install -r requirements.txt
 
 # copy entrypoint.sh
-ADD ./entrypoint.sh .
-RUN sed -i 's/\r$//g' $APP_HOME/entrypoint.sh
-RUN chmod +x $APP_HOME/entrypoint.sh
+ADD ./${ENTRYPOINT} .
+RUN sed -i 's/\r$//g' ${ENTRYPOINT_DIR}
+RUN chmod +x ${ENTRYPOINT_DIR}
 
 # copy project
-COPY . .
+COPY . $APP_HOME
 
 # run entrypoint
 ENTRYPOINT ["/django/entrypoint.sh"]

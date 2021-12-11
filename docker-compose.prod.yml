@@ -11,13 +11,13 @@ services:
     expose:
       - 8000
     volumes:
-      - static_volume:/app/django/static
-      - media_volume:/app/django/media
+      - static_volume:/django/static
+      - media_volume:/django/media
     depends_on:
       - db
 
   db:
-    image: postgres:13-alpine
+    image: postgres:14-alpine
     volumes:
       - pg-data:/var/lib/postgresql/data/
     env_file:
@@ -28,8 +28,8 @@ services:
     ports:
       - 1337:80
     volumes:
-      - static_volume:/app/django/static
-      - media_volume:/app/django/media
+      - static_volume:/django/static
+      - media_volume:/django/media
     depends_on:
       - django
 
