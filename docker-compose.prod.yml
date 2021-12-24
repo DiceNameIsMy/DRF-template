@@ -2,12 +2,12 @@ version: '3'
 
 services:
   django:
-    build: 
+    build:
       context: './'
       dockerfile: Dockerfile.prod
     entrypoint: /django/entrypoint.prod.sh
     env_file:
-      - env/.env.prod
+      - env_conf/.env.prod
     expose:
       - 8000
     volumes:
