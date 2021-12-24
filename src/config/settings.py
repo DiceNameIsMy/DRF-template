@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'DEV_SECRET_KEY')
 
-DEBUG = int(os.environ.get('DEBUG', default=1))
+DEBUG = bool(os.environ.get('DEBUG', default=1))
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True

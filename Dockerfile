@@ -5,12 +5,11 @@ RUN apt-get update \
     && apt-get -y install libpq-dev gcc
 
 # set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-ENV APP_HOME=/django
-ENV ENTRYPOINT="entrypoint.sh"
-ENV ENTRYPOINT_DIR="${APP_HOME}/${ENTRYPOINT}"
+ENV PYTHONDONTWRITEBYTECODE 1 \
+    PYTHONUNBUFFERED 1 \
+    APP_HOME=/django \
+    ENTRYPOINT="entrypoint.sh" \
+    ENTRYPOINT_DIR="${APP_HOME}/${ENTRYPOINT}"
 
 # create venv & use as default
 ENV VENV_DIR=/venv
@@ -20,16 +19,16 @@ ENV PATH="$VENV_DIR/bin:$PATH"
 WORKDIR $APP_HOME
 
 # install dependencies
-ADD requirements.txt .
+ADD src/requirements.txt .
 RUN pip install --upgrade pip wheel && pip install -r requirements.txt
 
 # copy entrypoint.sh
-ADD ./${ENTRYPOINT} .
+ADD ./src/${ENTRYPOINT} .
 RUN sed -i 's/\r$//g' ${ENTRYPOINT_DIR}
 RUN chmod +x ${ENTRYPOINT_DIR}
 
 # copy project
-COPY . $APP_HOME
+COPY src $APP_HOME
 
 # run entrypoint
 ENTRYPOINT ["/django/entrypoint.sh"]
