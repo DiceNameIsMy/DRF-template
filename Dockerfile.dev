@@ -23,13 +23,3 @@ RUN chmod +x entrypoint.dev.sh entrypoint.prod.sh
 
 # copy project
 COPY src $APP_HOME
-
-# collect static files for nginx
-RUN poetry run ./manage.py collectstatic --no-input
-
-# create the app user & permit to use app files
-RUN addgroup app && useradd -g app app && \
-    chown -R app:app $APP_HOME
-
-# change to the app user
-USER app

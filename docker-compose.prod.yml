@@ -5,9 +5,9 @@ services:
     build: 
       context: './'
       dockerfile: Dockerfile.prod
-    command: gunicorn config.wsgi:application -c config/gunicorn.conf.py --bind 0.0.0.0:8000
+    entrypoint: /django/entrypoint.prod.sh
     env_file:
-      - ./.env.prod
+      - env/.env.prod
     expose:
       - 8000
     volumes:
@@ -21,7 +21,7 @@ services:
     volumes:
       - pg-data:/var/lib/postgresql/data/
     env_file:
-      - ./.env.prod.db
+      - env/.env.prod.db
 
   nginx:
     build: ./nginx
