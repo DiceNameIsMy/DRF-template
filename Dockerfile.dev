@@ -1,8 +1,8 @@
 FROM python:3.9.7-slim
 
 # install initial dependencies
-RUN apt-get update \
-    && apt-get -y install libpq-dev gcc \
+RUN apt-get update && \
+    apt-get -y install libpq-dev gcc &&  \
     pip install --no-cache --upgrade pip poetry
 
 # set environment variables
