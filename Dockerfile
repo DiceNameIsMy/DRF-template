@@ -18,8 +18,10 @@ RUN poetry config virtualenvs.in-project true && \
     poetry install --no-dev
 
 # copy entrypoints
-COPY entrypoint.dev.sh entrypoint.prod.sh ./
-RUN chmod +x entrypoint.dev.sh entrypoint.prod.sh
+COPY entrypoint.sh ./
+RUN chmod +x entrypoint.sh
 
 # copy project
 COPY src $APP_HOME
+
+ENTRYPOINT [ "/django/entrypoint.sh" ]
