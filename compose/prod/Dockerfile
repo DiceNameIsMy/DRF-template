@@ -14,7 +14,7 @@ WORKDIR ${APP_HOME}
 
 # create the app user
 RUN addgroup app && useradd -g app app && \
-    chown -R app:app ${WORKDIR}
+    chown -R app:app ${APP_HOME}
 
 # install dependencies
 COPY poetry.lock pyproject.toml ./

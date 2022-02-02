@@ -4,28 +4,23 @@ services:
   api: &api
     build:
       context: .
-      dockerfile: compose/local/Dockerfile
+      dockerfile: compose/prod/Dockerfile
     image: yavolonter-prod-api
     container_name: yavolonter-prod-api
     command: bash -c "
-        poetry run ./manage.py migrate
-        && poetry run gunicorn сore.wsgi:application -c config/gunicorn.conf.py --bind 0.0.0.0:8000"
+        cd src/
+        && poetry run ./manage.py migrate
+        && poetry run gunicorn сore.wsgi:application"
     volumes:
       - ./src/:/app/src/
     ports:
       - 8000:8000
     env_file:
-      - compose/local/.env
-      - compose/local/.pg.env
-    depends_on:
-      - pg
+      - compose/prod/.env
 
   celeryworker:
     <<: *api
     image: yavolonter-prod-celeryworker
     container_name: yavolonter-prod-celeryworker
     command: poetry run celery -A core.celery worker -l info
-    depends_on:
-      - redis
-      - pg
     ports: []
