@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  api: &api
+    build:
+      context: .
+      dockerfile: compose/local/Dockerfile
+    image: yavolonter_local_api
+    container_name: yavolonter_local_api
+    command: bash -c "
+        poetry run ./manage.py migrate
+        && poetry run ./manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./src/:/app/src/
+    ports:
+      - 8000:8000
+    env_file:
+      - compose/local/.env
+      - compose/local/.pg.env
+    depends_on:
+      - pg
+
+  celeryworker:
+    <<: *api
+    image: yavolonter_local_celeryworker
+    container_name: yavolonter_local_celeryworker
+    command: poetry run celery -A core.celery worker -l info
+    depends_on:
+      - redis
+      - pg
+    ports: []
+
+  redis:
+    image: redis:6-alpine
+    container_name: yavolonter_local_redis
+    ports:
+      - 6380:6379
+    volumes:
+      - redis-data:/data
+
+  pg:
+    image: postgis/postgis:14-3.2-alpine
+    container_name: yavolonter_local_pg
+    ports:
+      - 5433:5432
+    volumes:
+      - pg-data:/var/lib/postgresql/data/
+    env_file:
+      - compose/local/.pg.env
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=postgres
+
+volumes:
+  redis-data:
+  pg-data:

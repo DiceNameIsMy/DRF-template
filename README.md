@@ -1,15 +1,31 @@
 # DRF-template
+DRF-template
 
 ## Setup
-### pre-commit hooks
-1. poetry install
-2. poetry run pre-commit install
 
-## Docker
 ### Development
-1. inside folder `env_conf/` remove `*-sample` ending from `.dev.env`
-2. run `docker-compose up --build`
 
-### Production
-1. inside folder `env_conf/` remove `*-sample` ending from `.prod.env` and `.prod.db.env`
-2. run `docker-compose -f docker-compose.prod.yml up --build`
+Pyenv or python 3.9 is required
+
+    pyenv install 3.9.9
+    pyenv local 3.9.9
+    python -m pip install poetry
+    python -m poetry install
+    poetry run pre-commit install
+
+### Containers
+
+#### Dev
+Load everything in container except for the api. It will be loaded locally with hot-reload mode
+
+remove `-sample` prefix from `.env-sample` and `.db.env-sample` in `compose/local/` folder
+
+    make dev-up
+
+#### Local
+Load everything in container including api
+
+remove `-sample` prefix from `.env-sample` and `.db.env-sample` in `compose/local/` folder
+
+
+    make local-up

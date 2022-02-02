@@ -1,7 +1,4 @@
-venv/
-.venv/
+*env
 __pycache__/
+.pytest_cache/
 db.sqlite3
-static/
-media/
-*.env
